@@ -5,15 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        $search = $request->input('search');
+        if($search != null){
+            $categories = DB::table('categories')->where('categories.title', 'LIKE', '%' .$search. '%')->paginate(10);
+        }else{
+            $categories = Category::all();
+        }
         return view('category.index', compact('categories'));
     }
 

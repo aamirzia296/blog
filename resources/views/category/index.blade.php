@@ -18,29 +18,50 @@
     <div class="container-fluid d-flex justify-content-center align-items-center mt-4">
         <div class="container">
             <h1 class="text-center mb-4">Categories List</h1>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($categories as $category)
+            <div class="row justify-content-center mb-4">
+                <div class="col-auto mb-4">
+                    <form action="{{ route('categories.index') }}" method="GET" class="d-flex">
+                        <input type="text" name="search" class="form-control me-2" placeholder="Search categories">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+                @if($categories->isEmpty())
+                    <div class="col-auto mb-4">
                         <tr>
-                            <td>{{ $category->id }}</td>
-                            <td>{{ $category->title }}</td>
-                            <td>
-                                <form action="{{ route('category.destroy', $category->id) }}">
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                                <a href="{{ route('category.edit', $category->id) }}" class="btn btn-success">Edit</a>
-                            </td>
+                            <td> <h3> There is no related Record: </h3></td>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </div>
+                @else
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                @if(Auth::user()->role == 'admin')
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($categories as $category)
+                                <tr>
+                                    <td>{{ $category->id }}</td>
+                                    <td>{{ $category->title }}</td>
+                                    @if(Auth::user()->role == 'admin')
+                                        <td>
+                                            <a href="{{ route('category.edit', $category->id) }}" class="btn btn-success">Edit</a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('category.destroy', $category->id) }}" class="btn btn-danger" onClick ="return confirm('Are you sure to delete this category?')">Delete</a>                                
+                                        </td>
+                                    @endif
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+            </div>
         </div>
     </div>
 

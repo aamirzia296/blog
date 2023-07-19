@@ -25,34 +25,37 @@
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </form>
                         </div>
-                        <table class="table">
-                            <thead>
+                        @if($posts->isEmpty())
+                            <div class="col-auto mb-4">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Title</th>
-                                    <th>Content</th>
-                                    <th>Author</th>
-                                    <th>Category Name</th>
+                                    <td> <h3> There is no related Record: </h3></td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($posts as $post)
+                            </div>
+                        @else
+                            <table class="table">
+                                <thead>
                                     <tr>
-                                        <td>{{ $post->id }}</td>
-                                        <td>{{ $post->title }}</td>
-                                        <td>{{ $post->content }}</td>
-                                        <td>{{ $post->users->name }}</td>
-                                        <td>
-                                            <ul>
-                                                @foreach ($post->categories as $category)
-                                                   {{ $category->title }}
-                                                @endforeach
-                                            </ul>
-                                        </td>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Content</th>
+                                        <th>Author</th>
+                                        <th>Category Name</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($posts as $post)
+                                        <tr>
+                                            <td>{{ $post->id }}</td>
+                                            <td>{{ $post->title }}</td>
+                                            <td>{{ $post->content }}</td>
+                                            <td>{{ $post->userName }}</td>
+                                            <td>{{ $post->categoryTitle }}</td>
+                                            
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
                     </div>
                 </div>
 

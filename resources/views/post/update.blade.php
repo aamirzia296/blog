@@ -22,7 +22,7 @@
                     <div class="mb-3 mt-5">
                         <label for="title" class="form-label">Select Category:</label>
                         <select class="form-select" aria-label="Default select example" name="category_id">
-                            <option selected disabled>{{ $post->title }}</option>
+                            <option selected disabled>{{ $post->categoryTitle }}</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ $category->title }}</option>
                             @endforeach

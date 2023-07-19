@@ -25,39 +25,42 @@
                                 <button type="submit" class="btn btn-primary">Search</button>
                             </form>
                         </div>
-                        <table class="table">
-                            <thead>
+                        @if($posts->isEmpty())
+                            <div class="col-auto mb-4">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Title</th>
-                                    <th>Content</th>
-                                    <th>Author</th>
-                                    <th>Category Name</th>
-                                    <th>Action</th>
+                                    <td> <h3> There is no related Record: </h3></td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($posts as $post)
+                            </div>
+                        @else
+                            <table class="table">
+                                <thead>
                                     <tr>
-                                        <td>{{ $post->id }}</td>
-                                        <td>{{ $post->title }}</td>
-                                        <td>{{ $post->content }}</td>
-                                        <td>{{ $post->users->name }}</td>
-                                        <td>
-                                            <ul>
-                                                @foreach ($post->categories as $category)
-                                                   {{ $category->title }}
-                                                @endforeach
-                                            </ul>
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('post.destroy', $post->id) }}" class="btn btn-danger">Delete</a>
-                                            <a href="{{ route('post.edit', $post->id) }}" class="btn btn-success">Edit</a>
-                                        </td>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Content</th>
+                                        <th>Author</th>
+                                        <th>Category Name</th>
+                                        <th>Action</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach ($posts as $post)
+                                        <tr>
+                                            <td>{{ $post->id }}</td>
+                                            <td>{{ $post->title }}</td>
+                                            <td>{{ $post->content }}</td>
+                                            <td>{{ $post->userName }}</td>
+                                            <td>{{ $post->categoryTitle }}</td>
+                                            <td>
+                                                <a href="{{ route('post.destroy', $post->id) }}" class="btn btn-danger" onClick ="return confirm('Are you sure to delete this post?')">Delete</a>
+                                                <a href="{{ route('post.edit', $post->id) }}" class="btn btn-success">Edit</a>
+                                                <a href="{{ route('post.show', $post->id) }}" class="btn btn-success">Show Post</a>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @endif
                     </div>
                 </div>
 

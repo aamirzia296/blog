@@ -17,28 +17,36 @@ class PostController extends Controller
      public function index(Request $request)
      {
         $search = $request->input('search');
-        // dd($search);
-        $userId = Auth::id();
         
-        // dd($posts);
-        $posts = Post::with('users', 'categories')
-                        ->whereHas('categories', function ($query) use ($search) 
-                            {
-                                $query->orWhere('title', 'like', '%' .$search. '%');
-                            })
-                        ->whereHas('users', function ($query) use ($search) 
-                        {
-                            $query->where('name', 'like', '%' .$search. '%');
-                        })->where('user_id', '=', Auth::id())->paginate(10);
-        // $posts = DB::table('posts')
-        //                 ->select('posts.*', 'users.name', 'categories.title')
-        //                 ->join('users','users.id','posts.user_id')
-        //                 ->join('category_post','category_post.post_id','posts.id')
-        //                 ->join('category_post','category_post.category_id','categories.id')
-        //                 ->where('posts.user_id', '=', $userId)
-        //                 ->where('title','LIKE', "%{$search}%")
-        //                 ->where('content', 'LIKE', "%{$search}%")
-        //                 ->paginate(10);
+        // $posts = Post::with('users', 'categories')
+        //                 ->whereHas('categories', function ($query) use ($search) 
+        //                     {
+        //                         $query->orWhere('title', 'like', '%' .$search. '%');
+        //                     })
+        //                 ->whereHas('users', function ($query) use ($search) 
+        //                 {
+        //                     $query->where('name', 'like', '%' .$search. '%');
+        //                 })->where('user_id', '=', Auth::id())->paginate(10);
+
+        if($search != null){
+            $posts = DB::table('posts')
+                        ->select('posts.*', 'users.name as userName', 'categories.title as categoryTitle')
+                        ->join('users','users.id','posts.user_id')
+                        ->join('categories','categories.id','posts.category_id')
+                        ->where('posts.title', 'like', '%' .$search. '%')
+                        ->where('posts.content', 'like', '%' .$search. '%')
+                        ->where('users.name', 'like', '%' .$search. '%')
+                        ->orWhere('categories.title', 'like', '%' .$search. '%')
+                        ->where('posts.user_id', '=', Auth::id())->paginate(10);
+                        // dd($posts);
+        }else{
+            $posts = DB::table('posts')
+                ->select('posts.*', 'users.name as userName', 'categories.title as categoryTitle')
+                ->join('users','users.id','posts.user_id')
+                ->join('categories','categories.id','posts.category_id')
+                ->where('posts.user_id', '=', Auth::id())
+                ->paginate(10);
+        }
         // dd($posts);
         return view('post.index', compact('posts'));
      }
@@ -59,14 +67,15 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|max:255',
             'content' => 'required',
+            'category_id' => 'required',
         ]);
 
         $post = new Post();
 
         $post->title = $request->title;
         $post->content = $request->content;
-
-        $post->user_id = Auth::user()->id;
+        $post->category_id = $request->category_id;
+        $post->user_id = $request->user_id;
 
         $post->save();
         $post->categories()->attach($request->category_id);
@@ -89,15 +98,21 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::find($id);
+        // $post = Post::with('categories')->find($id);
+        // dd($post);
+        // dd($post->id);
         $categories = Category::get();
-        //$post = Post::find($id)->with('categories')->get();
+        $post = Post::find($id)->with('categories')->get();
         $post = DB::table('posts')
-                        ->join('category_post', 'category_post.post_id', 'posts.id')
+                        ->select('posts.*', 'users.name as userName', 'categories.title as categoryTitle')
+                        // ->join('category_post', 'category_post.post_id', 'posts.id')
+                        ->join('categories', 'categories.id', 'posts.category_id')
+                        ->join('users', 'users.id', 'posts.user_id')
                         ->where('posts.id', '=', "$id")
-                        ->get();
+                        ->first();
+        //  dd($post->id);
         //$category = Category::find($post->category_id);
-        return view('post.update', compact('post','categories'));
+        return view('post.update', compact('post', 'categories'));
     }
 
     /**
@@ -110,16 +125,18 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'category_id' => 'required',
         ]);
 
         $post->title = $request->title;
         $post->content = $request->content;
+        $post->category_id = $request->category_id;
 
         $post->save();
         $post = Post::find($id);
 
         //return view('post.show', compact('post'));
-        return redirect()->route('posts.index')->with('success', 'Post Has Updated Successfully.');
+        return redirect()->route('posts.index');
     }
 
     /**
@@ -128,16 +145,40 @@ class PostController extends Controller
     public function destroy($id)
     {
         Post::where('id', $id)->delete();
-        return redirect()->back();
+        
+        $posts = Post::with('users', 'categories')
+                        ->where('user_id', '=', Auth::id())->paginate(10);
+        
+        return view('post.index', compact('posts'));
     }
     public function listing(Request $request)
     {
         $search = $request->input('search');
         // dd($search);
-        $userId = Auth::id();
-        $posts = Post::query()->where('title','LIKE', "%{$search}%")
-                            ->orWhere('content', 'LIKE', "%{$search}%")->get();
-                    
+        // $userId = Auth::id();
+        // $posts = Post::query()->where('title','LIKE', "%{$search}%")
+        //                     ->orWhere('content', 'LIKE', "%{$search}%")->get();
+        //                     if($search != null){
+        if($search != null){  
+            $posts = DB::table('posts')
+                    ->select('posts.*', 'users.name as userName', 'categories.title as categoryTitle')
+                    ->join('users','users.id','posts.user_id')
+                    ->join('categories','categories.id','posts.category_id')
+                    ->orWhere('posts.title', 'like', '%' .$search. '%')
+                    ->orWhere('posts.content', 'like', '%' .$search. '%')
+                    ->orWhere('users.name', 'like', '%' .$search. '%')
+                    ->orWhere('categories.title', 'like', '%' .$search. '%')
+                    // ->where('posts.user_id', '=', Auth::id())
+                    ->paginate(10);
+                    // dd($posts);
+        }else{
+            $posts = DB::table('posts')
+                        ->select('posts.*', 'users.name as userName', 'categories.title as categoryTitle')
+                        ->join('users','users.id','posts.user_id')
+                        ->join('categories','categories.id','posts.category_id')
+                        // ->where('posts.user_id', '=', Auth::id())
+                        ->paginate(10);
+        }            
         return view('post.listing', compact('posts'));
     }
 }

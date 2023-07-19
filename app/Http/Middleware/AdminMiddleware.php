@@ -20,6 +20,6 @@ class AdminMiddleware
         if(Auth::user()->role == 'admin'){
             return $next($request);
         }
-        return Redirect::route('welcome')->with(['message' => 'You are not allowed to access this route']);
+        return Redirect::route('welcome');
     }
 }

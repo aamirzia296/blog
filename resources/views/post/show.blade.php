@@ -12,12 +12,16 @@
         </head>
 
         <body>
-            <h1>{{ $post->title }}</h1>
-            <p>{{ $post->content }}</p>
-            <p>{{ $post->views }}</p>
-
-            <a href="{{ route('post.destroy', $post->id) }}" class="btn btn-danger">Delete</a>
-            <a href="{{ route('post.edit', $post->id) }}" class="btn btn-success">Edit</a>
+            <div class="container-fluid d-flex justify-content-center align-items-center mt-4">
+                <div class="container">
+                    <h1>{{ $post->title }}</h1>
+                    <p>{{ $post->content }}</p>
+                    <p>{{ $post->views }}</p>
+                
+                    <a href="{{ route('post.edit', $post->id) }}" class="btn btn-success">Edit</a>
+                    <a href="{{ route('post.destroy', $post->id) }}" class="btn btn-danger" onClick ="return confirm('Are you sure to delete this post?')">Delete</a>
+                </div>
+            </div>
         </body>
 
     </html>
