@@ -16,14 +16,14 @@
                 <form action="{{ route('test.store')}}" method="POST">
                     @csrf
                     <div class="mb-3 mt-5">
-                        <label for="title" class="form-label"> Title </label>
-                        <input type="text" name="title" id="title" placeholder="Enter Title" class="form-control">
+                        <label for="name" class="form-label"> Name </label>
+                        <input type="text" name="name" id="name" placeholder="Enter name" class="form-control">
                     </div>
                     <div class="mb-3 mt-5">
                         <label for="description" class="form-label"> Description </label>
                         <input type="text" name="description" id="description" placeholder="Enter Description" class="form-control">
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary" onclick="ajaxCall()">Submit</button>
                 </form>
             </div>
         </body>

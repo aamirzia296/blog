@@ -48,8 +48,12 @@
                                             <td>{{ $post->id }}</td>
                                             <td>{{ $post->title }}</td>
                                             <td>{{ $post->content }}</td>
-                                            <td>{{ $post->userName }}</td>
-                                            <td>{{ $post->categoryTitle }}</td>
+                                            <td>{{ $post->users->name }}</td>
+                                            <td>
+                                                @foreach ($post->categories as $category)
+                                                    {{ $category->title }}
+                                                @endforeach
+                                            </td>
                                             
                                         </tr>
                                     @endforeach

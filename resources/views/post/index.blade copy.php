@@ -49,12 +49,8 @@
                                             <td>{{ $post->id }}</td>
                                             <td>{{ $post->title }}</td>
                                             <td>{{ $post->content }}</td>
-                                            <td>{{ $post->users->name }}</td>
-                                            <td>
-                                                @foreach ($post->categories as $category)
-                                                    {{ $category->title }}
-                                                @endforeach
-                                            </td>
+                                            <td>{{ $post->userName }}</td>
+                                            <td>{{ $post->categoryTitle }}</td>
                                             <td>
                                                 <a href="{{ route('post.destroy', $post->id) }}" class="btn btn-danger" onClick ="return confirm('Are you sure to delete this post?')">Delete</a>
                                                 <a href="{{ route('post.edit', $post->id) }}" class="btn btn-success">Edit</a>
